@@ -8,6 +8,7 @@ import com.example.pooling.entity.User;
 import com.example.pooling.exception.DuplicateEmailException;
 import com.example.pooling.exception.InvalidLoginException;
 import com.example.pooling.repository.UserRepository;
+import com.example.pooling.security.JwtUtil;
 import com.example.pooling.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder passwordEncoder) {
+                           BCryptPasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     // ===================== SIGNUP =====================
@@ -67,20 +70,20 @@ public class UserServiceImpl implements UserService {
                         new InvalidLoginException("Invalid email or password")
                 );
 
-        boolean passwordMatch =
-                passwordEncoder.matches(dto.getPassword(), user.getPassword());
-
-        if (!passwordMatch) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new InvalidLoginException("Invalid email or password");
         }
 
-        LoginResponseDTO res = new LoginResponseDTO();
-        res.setUserId(user.getId());
-        res.setName(user.getName());
-        res.setEmail(user.getEmail());
-        res.setMessage("Login successful");
+        // 🔐 JWT TOKEN GENERATE (THIS WAS MISSING)
+        String token = jwtUtil.generateToken(user.getId());
 
-        return res;
+        return LoginResponseDTO.builder()
+                .userId(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .token(token)          // 🔥 VERY IMPORTANT
+                .message("Login successful")
+                .build();
     }
 
     // ===================== MAPPER =====================

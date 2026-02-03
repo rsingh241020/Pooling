@@ -1,23 +1,25 @@
 package com.example.pooling.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
-
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RideRequestDTO {
+public class RideResponseDTO {
 
+    private Long id;
     private String fromLocation;
     private String toLocation;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate rideDate;
-    private int totalSeats;
+    private String rideDate;
     private String rideTime;
+    private int totalSeats;
     private int availableSeats;
     private double price;
+
+    private Long driverId;
+    private String driverName;
 }
