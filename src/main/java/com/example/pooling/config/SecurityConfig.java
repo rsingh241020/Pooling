@@ -8,9 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.*;
 
-import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -25,8 +23,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
 
@@ -35,11 +33,14 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // ✅ PUBLIC APIs ONLY
                         .requestMatchers(
-                                "/api/users/login",
-                                "/api/users/register",
-                                "/api/rides/search"
+                                "/users/register",
+                                "/users/login"
                         ).permitAll()
+
+                        // 🔐 PROTECTED
                         .anyRequest().authenticated()
                 )
 
@@ -48,28 +49,5 @@ public class SecurityConfig {
                 );
 
         return http.build();
-    }
-
-    // 🌍 GLOBAL CORS
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "https://pooling-production.up.railway.app"
-        ));
-
-        config.setAllowedMethods(List.of("*"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
     }
 }
