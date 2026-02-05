@@ -11,7 +11,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.*;
 
 import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -37,9 +36,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/users/login",
-                                "/users/register",
-                                "/rides/search"
+                                "/api/users/login",
+                                "/api/users/register",
+                                "/api/rides/search"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -51,15 +50,15 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 🌍 GLOBAL CORS (IMPORTANT)
+    // 🌍 GLOBAL CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173",   // Local frontend
-                "https://pooling-production.up.railway.app" // Live backend calls
+                "http://localhost:5173",
+                "https://pooling-production.up.railway.app"
         ));
 
         config.setAllowedMethods(List.of("*"));
