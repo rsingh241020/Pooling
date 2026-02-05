@@ -20,6 +20,51 @@ public class JwtFilter extends OncePerRequestFilter {
     public JwtFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
+    //    @Override
+//    protected void doFilterInternal(
+//            HttpServletRequest request,
+//            HttpServletResponse response,
+//            FilterChain filterChain
+//    ) throws ServletException, IOException {
+//
+//        String path = request.getRequestURI();
+//        System.out.println("🔥 JWT FILTER HIT for URI = " + path);
+//
+//        // ✅ Skip JWT for register & login
+//        if (path.contains("/users/register") || path.contains("/users/login")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//
+//        String authHeader = request.getHeader("Authorization");
+//
+//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+//
+//            String token = authHeader.substring(7);
+//
+//            if (jwtUtil.isTokenValid(token)) {
+//
+//                Long userId = jwtUtil.extractUserId(token);
+//
+//
+//                UsernamePasswordAuthenticationToken authentication =
+//                        new UsernamePasswordAuthenticationToken(
+//                                userId,
+//                                null,
+//                                Collections.emptyList()
+//                        );
+//
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//                request.setAttribute("userId", userId);
+//            }
+//        }
+//
+//        filterChain.doFilter(request, response);
+//    }
+//
+//}
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -30,8 +75,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         System.out.println("🔥 JWT FILTER HIT for URI = " + path);
 
-        // ✅ Skip JWT for register & login
-        if (path.contains("/users/register") || path.contains("/users/login")) {
+        // ✅ PUBLIC ENDPOINTS SKIP
+        if (path.startsWith("/api/users/login") ||
+                path.startsWith("/api/users/register")) {
+
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,7 +93,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 Long userId = jwtUtil.extractUserId(token);
 
-
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userId,
@@ -54,7 +100,8 @@ public class JwtFilter extends OncePerRequestFilter {
                                 Collections.emptyList()
                         );
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
 
                 request.setAttribute("userId", userId);
             }
@@ -62,5 +109,4 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
 }
