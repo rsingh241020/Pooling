@@ -16,7 +16,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/rides")
+@RequestMapping("/api/rides")
 public class RideController {
 
     private final RideService rideService;

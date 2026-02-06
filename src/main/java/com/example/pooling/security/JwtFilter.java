@@ -76,8 +76,9 @@ public class JwtFilter extends OncePerRequestFilter {
         System.out.println("🔥 JWT FILTER HIT for URI = " + path);
 
         // ✅ PUBLIC ENDPOINTS SKIP
-        if (path.startsWith("/api/users/login") ||
-                path.startsWith("/api/users/register")) {
+        if (path.startsWith("/api/users/login")
+                || path.startsWith("/api/rides/search")||
+        path.startsWith("/api/users/register")) {
 
             filterChain.doFilter(request, response);
             return;
