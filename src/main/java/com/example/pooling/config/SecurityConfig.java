@@ -61,7 +61,8 @@ public class SecurityConfig {
         // ✅ Allowed Frontend URLs
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://pooling-frontend.vercel.app"
+                "https://ridepool-app.vercel.app"
+
         ));
 
         // ✅ Allow all methods (GET, POST, PUT, DELETE…)
